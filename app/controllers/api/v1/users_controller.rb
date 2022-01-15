@@ -7,13 +7,18 @@ module Api
       end
 
       def create
-        user = User.new(user_params);
+        # Ensure user does not exist
+        if !User.exists?(username: params[:username])
+          user = User.new(user_params);
 
-        if user.save
-          render json: {status:'SUCCESS', message:'User added', data:user},status: :ok
+          if user.save
+            render json: {status:'SUCCESS', message:'User added', data:user},status: :ok
+          else
+            render json: {status:'ERROR', message:'User could not be added',
+            data:user.errors},status: :unprocessable_entity
+          end
         else
-          render json: {status:'ERROR', message:'User could not be added',
-          data:user.errors},status: :unprocessable_entity
+          render json: {status:'ERROR', message:'User exists'},status: :unprocessable_entity
         end
       end
 

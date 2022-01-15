@@ -18,14 +18,6 @@ class User < ApplicationRecord
   confirmation: true,
   on: :create
 
-  # Put method
-  # validates :password,
-  # allow_nil: true,
-  # length: { in: Devise.password_length },
-  # format: { with: PASSWORD_FORMAT },
-  # confirmation: true,
-  # on: :update
-
   validates :username,
   presence: true
 
