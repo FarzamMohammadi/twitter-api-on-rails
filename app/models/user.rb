@@ -1,4 +1,8 @@
+require 'bcrypt'
+
 class User < ApplicationRecord
+  include BCrypt
+
   PASSWORD_FORMAT = /\A
     (?=.{8,})          # Must contain 8 or more characters
     (?=.*\d)           # Must contain a digit
@@ -14,14 +18,20 @@ class User < ApplicationRecord
   confirmation: true,
   on: :create
 
-validates :password,
-  allow_nil: true,
-  length: { in: Devise.password_length },
-  format: { with: PASSWORD_FORMAT },
-  confirmation: true,
-  on: :update
+  # Put method
+  # validates :password,
+  # allow_nil: true,
+  # length: { in: Devise.password_length },
+  # format: { with: PASSWORD_FORMAT },
+  # confirmation: true,
+  # on: :update
 
   validates :username,
   presence: true
+
+  # Encrypt password
+  after_validation(on: :create) do
+  self.password= Password.create(:password)
+  end
 
 end
