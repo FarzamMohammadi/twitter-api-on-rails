@@ -1,6 +1,23 @@
 module Api
   module V1
     class ChatsController < ApplicationController
+      def index
+        # Renders unread messages
+        chat_to_show = Chat.where(receiver: session[:user], sender: chat_params[:sender], read: false)
+        messages_to_show = chat_to_show.pluck(:message)
+
+        if !chat_to_show.blank?
+          render json: {status:'SUCCESS', message:'Messages retrieved', data:messages_to_show},status: :ok
+          # Saves messages as read after rendering
+          chat_to_show.each do |c|
+            c.read = true
+            c.save
+          end
+        else
+          render json: {status:'SUCCESS', message:'You have no messages'},status: :ok
+        end
+
+      end
       def create
         # Checks to see if receiver exists in DB - not necessary - thought it would make api more practical
         exists = User.find_by(username: chat_params[:receiver])
@@ -20,7 +37,7 @@ module Api
       private
 
       def chat_params
-        params.require(:chat).permit(:receiver, :message)
+        params.require(:chat).permit(:receiver, :message, :sender)
       end
     end
   end
