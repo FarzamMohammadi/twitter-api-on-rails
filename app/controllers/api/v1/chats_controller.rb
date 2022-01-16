@@ -30,7 +30,7 @@ module Api
             data:new_chat.errors},status: :unprocessable_entity
           end
         else
-          render json: {status:'ERROR', message:'Receiver does not exist'},status: :bad_request
+          render json: {status:'ERROR', message:'Receiver profile does not exist'},status: :bad_request
         end
       end
 
