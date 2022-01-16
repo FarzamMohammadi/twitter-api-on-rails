@@ -13,7 +13,7 @@ class User < ApplicationRecord
 
   validates :password,
   presence: true,
-  length: { in: Devise.password_length },
+  length: { minimum: 2 },
   format: { with: PASSWORD_FORMAT },
   confirmation: true,
   on: :create
@@ -23,7 +23,7 @@ class User < ApplicationRecord
 
   # Encrypt password
   after_validation(on: :create) do
-  self.password= Password.create(:password)
+  self.password= Password.create(password)
   end
 
 end

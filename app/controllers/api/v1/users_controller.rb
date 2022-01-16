@@ -7,25 +7,36 @@ module Api
       end
 
       def create
-        # Ensure user does not exist
-        if !User.exists?(username: params[:username])
+        user_input_username = user_params[:username]
+        user_input_password = user_params[:password]
+        # If user !exists then resgister and add to session
+        if !User.exists?(username: user_input_username)
           user = User.new(user_params);
-
           if user.save
-            render json: {status:'SUCCESS', message:'User added', data:user},status: :ok
+            render json: {status:'SUCCESS', message:'User added'},status: :ok
+            session[:user] = user.username
           else
             render json: {status:'ERROR', message:'User could not be added',
             data:user.errors},status: :unprocessable_entity
           end
+        # If use exists check credentials and login/set session
         else
-          render json: {status:'ERROR', message:'User exists'},status: :unprocessable_entity
+          hash_password = User.find_by(username: user_input_username).password
+          decrypt_password = BCrypt::Password.new(hash_password)
+
+          if decrypt_password == user_input_password
+            session[:user] = user_input_username
+            render json: {status:'SUCCESS', message:'Login successful'},status: :ok
+          else
+            render json: {status:'ERROR', message:'Could not log in'},status: :unauthorized
+          end
         end
       end
 
       private
 
       def user_params
-        params.permit(:username, :password)
+        params.require(:user).permit(:username, :password)
       end
     end
   end
