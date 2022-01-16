@@ -2,12 +2,12 @@
 
 one:
   username: MyString
-  tweet: MyString
+  description: MyString
   like: MyString
   retweet: MyString
 
 two:
   username: MyString
-  tweet: MyString
+  description: MyString
   like: MyString
   retweet: MyString

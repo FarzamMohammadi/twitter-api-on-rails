@@ -16,8 +16,8 @@ module Api
         else
           render json: {status:'SUCCESS', message:'You have no messages'},status: :ok
         end
-
       end
+      
       def create
         # Checks to see if receiver exists in DB - not necessary - thought it would make api more practical
         exists = User.find_by(username: chat_params[:receiver])

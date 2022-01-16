@@ -8,7 +8,7 @@ module Api
         if !User.exists?(username: user_input_username)
           user = User.new(user_params);
           if user.save
-            render json: {status:'SUCCESS', message:'User added'},status: :ok
+            render json: {status:'SUCCESS', message:'User added'},status: :created
             session[:user] = user.username
           else
             render json: {status:'ERROR', message:'User could not be added',
