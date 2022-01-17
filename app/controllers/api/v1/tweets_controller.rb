@@ -8,21 +8,26 @@ module Api
         if !user_tweets.blank?
           render json: {status:'SUCCESS', message:'Tweets retrieved', data:user_tweets},status: :ok
         else
-          render json: {status:'SUCCESS', message:'No tweets to show'},status: :created
+          render json: {status:'SUCCESS', message:'No tweets to show'},status: :ok
         end
       end
 
       def create
-        new_tweet = Tweet.new(username: session[:user], description: tweet_params[:description] , like: "", retweet: "");
+        params_description = tweet_params[:description]
+        if !params_description.blank? && !params_description.nil?
+          new_tweet = Tweet.new(username: session[:user], description: params_description , like: "", retweet: "");
 
-        if new_tweet.save
-          render json: {status:'SUCCESS', message:'Tweets sent', data:new_tweet},status: :ok
+          if new_tweet.save
+            render json: {status:'SUCCESS', message:'Tweet sent', data:new_tweet},status: :created
+          else
+            render json: {status:'ERROR', message:'Tweet could not be sent', data:new_tweet.errors},status: :unprocessable_entity
+          end
         else
-          render json: {status:'ERROR', message:'Tweets could not be sent', data:new_tweet.errors},status: :unprocessable_entity
+          render json: {status:'ERROR', message:'Tweet cannot be blank'},status: :unprocessable_entity
         end
       end
-      def update
 
+      def update
         user_tweet = Tweet.find(params[:id])
         if user_tweet.username == session[:user]
           user_tweet.description = tweet_params[:description]
@@ -32,6 +37,7 @@ module Api
           render json: {status:'ERROR', message:'You do not have permission'},status: :unauthorized
         end
       end
+      
       def destroy
         user_tweet = Tweet.find(params[:id])
         if user_tweet.username == session[:user]

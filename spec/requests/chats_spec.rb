@@ -127,7 +127,7 @@ RSpec.describe 'Chats API', type: :request do
                 expect(JSON.parse(response.body)["message"]).to eq("You have no messages")
             end
         end
-
     end
+    
   end
 end
