@@ -17,7 +17,8 @@ module Api
           end
         # If use exists check credentials and login/set session
         else
-          hash_password = User.find_by(username: user_input_username).password
+          user =  User.find_by(username: user_input_username)
+          hash_password = user.password
           decrypt_password = BCrypt::Password.new(hash_password)
 
           if decrypt_password == user_input_password
