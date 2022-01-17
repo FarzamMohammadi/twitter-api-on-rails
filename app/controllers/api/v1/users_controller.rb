@@ -8,7 +8,8 @@ module Api
         if !User.exists?(username: user_input_username)
           user = User.new(user_params);
           if user.save
-            render json: {status:'SUCCESS', message:'User added'},status: :created
+            render json: {status:'SUCCESS', message:'User added', data:user},status: :created
+            reset_session
             session[:user] = user.username
           else
             render json: {status:'ERROR', message:'User could not be added',
@@ -20,8 +21,9 @@ module Api
           decrypt_password = BCrypt::Password.new(hash_password)
 
           if decrypt_password == user_input_password
+            reset_session
             session[:user] = user_input_username
-            render json: {status:'SUCCESS', message:'Login successful'},status: :ok
+            render json: {status:'SUCCESS', message:'Login successful', data:user},status: :ok
           else
             render json: {status:'ERROR', message:'Could not log in'},status: :unauthorized
           end
