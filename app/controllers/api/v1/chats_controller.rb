@@ -6,7 +6,7 @@ module Api
         chat_to_show = Chat.where(receiver: session[:user], sender: chat_params[:sender], read: false)
         messages_to_show = chat_to_show.pluck(:message)
 
-        if !chat_to_show.blank?
+        if !chat_to_show.blank? 
           render json: {status:'SUCCESS', message:'Messages retrieved', data:messages_to_show},status: :ok
           # Saves messages as read after rendering
           chat_to_show.each do |c|
@@ -21,13 +21,18 @@ module Api
       def create
         # Checks to see if receiver exists in DB - not necessary - thought it would make api more practical
         exists = User.find_by(username: chat_params[:receiver])
-        if !exists.nil?
-          new_chat = Chat.new(sender: session[:user], receiver: chat_params[:receiver] , message: chat_params[:message], read: false);
-          if new_chat.save
-            render json: {status:'SUCCESS', message:'Message sent', data:new_chat},status: :ok
+        if !exists.nil? 
+          message_to_send = chat_params[:message]
+          if !message_to_send.nil? && !message_to_send.blank?
+            new_chat = Chat.new(sender: session[:user], receiver: chat_params[:receiver] , message: chat_params[:message], read: false);
+            if new_chat.save
+              render json: {status:'SUCCESS', message:'Message sent', data:new_chat},status: :ok
+            else
+              render json: {status:'ERROR', message:'Message could not be sent',
+              data:new_chat.errors},status: :unprocessable_entity
+            end
           else
-            render json: {status:'ERROR', message:'Message could not be added',
-            data:new_chat.errors},status: :unprocessable_entity
+            render json: {status:'ERROR', message:'Message cannot be empty'},status: :unprocessable_entity
           end
         else
           render json: {status:'ERROR', message:'Receiver profile does not exist'},status: :bad_request

@@ -34,7 +34,7 @@ RSpec.describe 'Users API', type: :request do
         expect(JSON.parse(response.body)["message"]).to eq("Could not log in")
       end
 
-      it "log in with correct password" do
+      it "logs in with correct password" do
         expect { post "/api/v1/users", params: valid_params }.to change(User, :count).by(+1)
         post "/api/v1/users", params: valid_params
         expect(response).to have_http_status :ok
